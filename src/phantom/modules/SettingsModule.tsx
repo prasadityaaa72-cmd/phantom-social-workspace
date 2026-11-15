@@ -186,8 +186,7 @@ function Integrations() {
       <div className="rounded-md border border-warning/40 bg-warning/10 p-3 text-micro text-foreground">
         <p className="mb-1 font-mono font-medium text-warning">Official API access is not configured</p>
         <p className="text-foreground/85">
-          This is an interface prototype. Every post, message and profile shown is local sample data. Real account connections will only
-          be added in a later phase through official, approved APIs.
+          This is a browser-only prototype. Posts, messages and profiles are sample data; your likes, saves, comments, demo messages and appearance settings stay in this browser. Real account connections would require official, approved APIs.
         </p>
       </div>
 
@@ -217,7 +216,7 @@ function Integrations() {
           <li>Ask for, store or transmit social-media passwords or tokens</li>
           <li>Scrape websites or use unofficial APIs</li>
           <li>Send messages, post, like or follow on any real platform</li>
-          <li>Track you, save data, or contact a server</li>
+          <li>Send your workspace data to a server or collect analytics</li>
         </ul>
       </div>
     </div>
