@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- All app UI lives under `src/phantom/` (data / lib / state / ui / shell / modules); the `/` route only renders `PhantomApp`. Why: keeps the IDE workbench self-contained and modules swappable.
+- Workspace state (tabs, panels, settings, module data) lives in one `WorkspaceProvider` context, in memory only. Why: prototype phase has no backend or persistence by design.
+- Theme, accent, density and scale are `data-*` attributes on `<html>` mapped to tokens in `src/styles.css`. Why: portals (dialogs, palette, tooltips) must inherit the active theme.
+- `cn()` registers custom font-size tokens with tailwind-merge; add any new `--text-*` token there too. Why: otherwise merge drops them as text colors.

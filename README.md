@@ -1,29 +1,57 @@
-# Welcome to your Lovable project
+# PROJECT PHANTOM
 
-This project was built with [Lovable](https://lovable.dev).
+An IDE-inspired desktop workspace concept for social-media activity. Feed, Inbox, Explore,
+Profile and Settings open as editor tabs inside a VS Code–style workbench with an activity
+rail, explorer sidebar, bottom output panel, status bar and a Ctrl/Cmd+K command palette.
 
-## Build with Lovable
+> **Demo-only prototype.** Every post, message, profile and metric is fictional sample data
+> stored in `src/phantom/data`. Likes, saves, comments and messages only change in-memory
+> state in your browser tab and reset on reload. There is **no** Instagram login, scraping,
+> unofficial API use, credential collection, backend, analytics or persistent storage.
+> Official, approved API integrations are planned for a later phase.
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## Run locally
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```bash
+bun install
+bun run dev        # http://localhost:8080
+bun run test       # unit tests (vitest)
+bun run build      # production build
 ```
 
-## Built with
+Designed desktop-first at 1440×900 and responsive down to tablet and phone widths.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Keyboard shortcuts
+
+| Keys | Action |
+| --- | --- |
+| Ctrl/Cmd + K | Command palette |
+| Ctrl/Cmd + B | Toggle sidebar |
+| Ctrl + \` | Toggle bottom panel |
+| Alt + 1…5 | Feed / Inbox / Explore / Profile / Settings |
+| Alt + W | Close active tab |
+| Enter | Send demo message in Inbox |
+| Double-click media | Like a sample post |
+
+## Structure
+
+```text
+src/
+  routes/index.tsx            Single page; renders <PhantomApp />
+  styles.css                  Design tokens: themes, accents, density, scale (oklch)
+  phantom/
+    types.ts                  Shared types
+    data/                     Local sample fixtures (creators, feed, inbox, explore, profile, logs)
+    lib/                      Module registry + shortcuts, explore filter, formatters
+    state/workspace.tsx       WorkspaceProvider: tabs, panels, settings, logs, module state
+    ui/primitives.tsx         Hint, IconButton, DisabledAction, Avatar, MediaTile, Segmented, JsonView…
+    shell/                    Shell, TitleBar, ActivityRail, Sidebar, EditorTabs, TerminalPanel,
+                              StatusBar, CommandPalette, Welcome
+    modules/                  FeedModule, InboxModule, ExploreModule, ProfileModule, SettingsModule
+```
+
+- Appearance settings are applied as `data-*` attributes on `<html>` so dialogs and the
+  palette pick up the active theme.
+- Unavailable features (calls, profile editing, connecting accounts) render as visibly
+  disabled controls with a tooltip explaining why.
+- The bottom panel shows read-only demo output; it never executes commands.
