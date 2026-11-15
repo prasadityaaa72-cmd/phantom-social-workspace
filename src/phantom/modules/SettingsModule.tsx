@@ -246,7 +246,7 @@ export function SettingsModule() {
           </button>
         ))}
         <span className="ml-auto hidden items-center font-mono text-[0.625rem] text-muted-foreground sm:flex">
-          changes apply instantly · not saved after reload
+          changes apply instantly · saved in this browser
         </span>
       </div>
       <div role="tabpanel" className="min-h-0 flex-1 overflow-y-auto">
