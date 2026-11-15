@@ -1,14 +1,12 @@
 # PROJECT PHANTOM
 
-An IDE-inspired desktop workspace concept for social-media activity. Feed, Inbox, Explore,
+An IDE-inspired browser workspace for social-media activity. Feed, Inbox, Explore,
 Profile and Settings open as editor tabs inside a VS Code–style workbench with an activity
 rail, explorer sidebar, bottom output panel, status bar and a Ctrl/Cmd+K command palette.
 
 > **Demo-only prototype.** Every post, message, profile and metric is fictional sample data
-> stored in `src/phantom/data`. Likes, saves, comments and messages only change in-memory
-> state in your browser tab and reset on reload. There is **no** Instagram login, scraping,
-> unofficial API use, credential collection, backend, analytics or persistent storage.
-> Official, approved API integrations are planned for a later phase.
+> stored in `src/phantom/data`. Likes, saves, comments, demo messages and appearance settings are saved in this browser's local storage. They are not synced across devices or sent to a server. Clearing this site's browser data removes them. There is **no** Instagram login, scraping, unofficial API use, credential collection, backend or analytics.
+> Any future account integration would require official, approved APIs and eligibility.
 
 ## Run locally
 
@@ -19,7 +17,7 @@ bun run test       # unit tests (vitest)
 bun run build      # production build
 ```
 
-Designed desktop-first at 1440×900 and responsive down to tablet and phone widths.
+Designed desktop-first at 1440×900 and responsive down to tablet and phone widths. The app runs as a web app; no desktop installer is required.
 
 ## Keyboard shortcuts
 
