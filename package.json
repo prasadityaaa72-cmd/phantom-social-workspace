@@ -11,9 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "desktop:dev": "electron .",
-    "desktop:build": "electron-builder --win"
+    "test:watch": "vitest"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -93,27 +91,6 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
-    "vitest": "^4.1.10",
-    "electron": "^39.2.7",
-    "electron-builder": "^26.0.12"
-  },
-  "main": "electron/main.cjs",
-  "build": {
-    "appId": "com.projectphantom.desktop",
-    "productName": "Project Phantom",
-    "directories": {
-      "output": "release"
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "artifactName": "Project-Phantom-Setup-${version}.${ext}"
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true
-    }
+    "vitest": "^4.1.10"
   }
 }
