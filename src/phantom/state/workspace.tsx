@@ -39,7 +39,7 @@ function useWorkspaceState() {
   const [settings, setSettings] = useState<WorkspaceSettings>(DEFAULT_SETTINGS);
   const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
   const logId = useRef(INITIAL_LOGS.length);
-  const storageReady = useRef(false);
+  const [storageReady, setStorageReady] = useState(false);
 
   // Module state (all local, in-memory)
   const [posts, setPosts] = useState<Post[]>(FEED_POSTS);
@@ -72,17 +72,17 @@ function useWorkspaceState() {
     } catch {
       // If browser storage is unavailable or malformed, keep the sample defaults.
     }
-    storageReady.current = true;
+    setStorageReady(true);
   }, []);
 
   useEffect(() => {
-    if (!storageReady.current) return;
+    if (!storageReady) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ settings, posts, conversations }));
     } catch {
       // Storage may be disabled or full; the app remains usable for this session.
     }
-  }, [settings, posts, conversations]);
+  }, [storageReady, settings, posts, conversations]);
 
   // Reflect appearance settings on <html> so portals (palette, dialogs) are themed too.
   useEffect(() => {
