@@ -16,6 +16,8 @@ import type {
   WorkspaceSettings,
 } from "../types";
 
+const STORAGE_KEY = "project-phantom.workspace.v1";
+
 export const DEFAULT_SETTINGS: WorkspaceSettings = {
   theme: "phantom",
   accent: "blue",
@@ -37,6 +39,7 @@ function useWorkspaceState() {
   const [settings, setSettings] = useState<WorkspaceSettings>(DEFAULT_SETTINGS);
   const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
   const logId = useRef(INITIAL_LOGS.length);
+  const [storageReady, setStorageReady] = useState(false);
 
   // Module state (all local, in-memory)
   const [posts, setPosts] = useState<Post[]>(FEED_POSTS);
@@ -54,6 +57,32 @@ function useWorkspaceState() {
     const entry: LogEntry = { id: `l${logId.current}`, time: clockTime(), level, source, message };
     setLogs((prev) => [...prev.slice(-199), entry]);
   }, []);
+
+  // Restore and persist user-owned workspace changes in this browser only.
+  // The readiness guard prevents the initial defaults from overwriting saved data.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as { settings?: WorkspaceSettings; posts?: Post[]; conversations?: Conversation[] };
+        if (saved.settings && typeof saved.settings === "object") setSettings({ ...DEFAULT_SETTINGS, ...saved.settings });
+        if (Array.isArray(saved.posts)) setPosts(saved.posts);
+        if (Array.isArray(saved.conversations)) setConversations(saved.conversations);
+      }
+    } catch {
+      // If browser storage is unavailable or malformed, keep the sample defaults.
+    }
+    setStorageReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!storageReady) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ settings, posts, conversations }));
+    } catch {
+      // Storage may be disabled or full; the app remains usable for this session.
+    }
+  }, [storageReady, settings, posts, conversations]);
 
   // Reflect appearance settings on <html> so portals (palette, dialogs) are themed too.
   useEffect(() => {
