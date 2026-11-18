@@ -1,4 +1,5 @@
 import { Minus, PanelBottom, PanelLeft, Search, Square, X } from "lucide-react";
+import { AuthControl } from "./AuthControl";
 import { useWorkspace } from "../state/workspace";
 import { Hint, HintIconButton, Kbd, PhantomLogo } from "../ui/primitives";
 
@@ -32,6 +33,7 @@ export function TitleBar() {
       </div>
 
       <div className="flex items-center">
+        <AuthControl />
         <HintIconButton
           label={ws.sidebarOpen ? "Hide sidebar" : "Show sidebar"}
           hint="Toggle sidebar · Ctrl/Cmd+B"
