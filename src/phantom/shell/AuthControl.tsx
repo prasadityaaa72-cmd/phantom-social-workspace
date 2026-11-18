@@ -11,6 +11,8 @@ export function AuthControl() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [profileUsername, setProfileUsername] = useState<string | null>(null);
+  const [newUsername, setNewUsername] = useState("");
   const [mode, setMode] = useState<AuthMode>("signin");
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -31,6 +33,35 @@ export function AuthControl() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!supabase || !session?.user.id) {
+      setProfileUsername(null);
+      return;
+    }
+    let alive = true;
+    supabase.from("profiles").select("username").eq("id", session.user.id).maybeSingle().then(({ data }) => {
+      if (alive) setProfileUsername(data?.username ?? null);
+    });
+    return () => { alive = false; };
+  }, [session?.user.id]);
+
+  async function saveUsername(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase) return;
+    const normalized = newUsername.trim().toLowerCase();
+    if (!/^[a-z0-9_]{3,24}$/.test(normalized)) {
+      setNotice("Username must be 3–24 characters using lowercase letters, numbers, or underscores.");
+      return;
+    }
+    setBusy(true);
+    setNotice("");
+    const { error } = await supabase.auth.updateUser({ data: { username: normalized } });
+    setBusy(false);
+    if (error) { setNotice(error.message); return; }
+    setProfileUsername(normalized);
+    setNewUsername("");
+    setNotice("Username saved.");
+  }
   function changeMode(nextMode: AuthMode) {
     setMode(nextMode);
     setNotice("");
@@ -160,15 +191,17 @@ export function AuthControl() {
             </p>
           ) : session?.user.email ? (
             <>
-              <p className="mb-3 break-all text-xs text-muted-foreground">{session.user.email}</p>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={signOut}
-                className="w-full rounded-sm border border-border px-3 py-2 text-xs hover:bg-hover disabled:opacity-50"
-              >
-                {busy ? "Please wait…" : "Sign out"}
-              </button>
+              <p className="mb-1 break-all text-xs text-muted-foreground">{session.user.email}</p>
+              {profileUsername ? (
+                <p className="mb-3 font-mono text-xs text-foreground">@{profileUsername}</p>
+              ) : (
+                <form onSubmit={saveUsername} className="mb-3 space-y-2">
+                  <p className="text-xs text-muted-foreground">Choose a username for this existing account.</p>
+                  <input required minLength={3} maxLength={24} pattern="[A-Za-z0-9_]{3,24}" value={newUsername} onChange={(event) => setNewUsername(event.target.value)} placeholder="Choose username" className={inputClass} />
+                  <button type="submit" disabled={busy} className="w-full rounded-sm bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">{busy ? "Saving…" : "Save username"}</button>
+                </form>
+              )}
+              <button type="button" disabled={busy} onClick={signOut} className="w-full rounded-sm border border-border px-3 py-2 text-xs hover:bg-hover disabled:opacity-50">{busy ? "Please wait…" : "Sign out"}</button>
             </>
           ) : (
             <>
