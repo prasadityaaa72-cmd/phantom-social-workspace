@@ -205,7 +205,13 @@ export function AuthControl() {
             <p className="text-xs text-muted-foreground">
               Supabase environment is not configured for this deployment.
             </p>
-          ) : session?.user.email && recoveryMode ? (\n            <form onSubmit={updateRecoveredPassword} className="space-y-2">\n              <p className="text-xs text-muted-foreground">Set a new password for your PHANTOM account.</p>\n              <input required type="password" minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="New password (8+ characters)" className={inputClass} />\n              <button type="submit" disabled={busy} className="w-full rounded-sm bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">{busy ? "Updating…" : "Update password"}</button>\n            </form>\n          ) : session?.user.email ? (
+          ) : session?.user.email && recoveryMode ? (
+            <form onSubmit={updateRecoveredPassword} className="space-y-2">
+              <p className="text-xs text-muted-foreground">Set a new password for your PHANTOM account.</p>
+              <input required type="password" minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="New password (8+ characters)" className={inputClass} />
+              <button type="submit" disabled={busy} className="w-full rounded-sm bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">{busy ? "Updating…" : "Update password"}</button>
+            </form>
+          ) : session?.user.email ? (
             <>
               <p className="mb-1 break-all text-xs text-muted-foreground">{session.user.email}</p>
               {profileUsername ? (
