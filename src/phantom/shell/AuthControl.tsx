@@ -13,6 +13,8 @@ export function AuthControl() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const [newUsername, setNewUsername] = useState("");
+  const [recoveryMode, setRecoveryMode] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
   const [mode, setMode] = useState<AuthMode>("signin");
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -24,8 +26,9 @@ export function AuthControl() {
     supabase.auth.getSession().then(({ data }) => {
       if (alive) setSession(data.session);
     });
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
+      if (event === "PASSWORD_RECOVERY") setRecoveryMode(true);
     });
     return () => {
       alive = false;
@@ -45,6 +48,19 @@ export function AuthControl() {
     return () => { alive = false; };
   }, [session?.user.id]);
 
+  async function updateRecoveredPassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase) return;
+    if (newPassword.length < 8) { setNotice("Use at least 8 characters."); return; }
+    setBusy(true);
+    setNotice("");
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setBusy(false);
+    if (error) { setNotice(error.message); return; }
+    setRecoveryMode(false);
+    setNewPassword("");
+    setNotice("Password updated. You can now use your username or email to log in.");
+  }
   async function saveUsername(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase) return;
@@ -189,7 +205,7 @@ export function AuthControl() {
             <p className="text-xs text-muted-foreground">
               Supabase environment is not configured for this deployment.
             </p>
-          ) : session?.user.email ? (
+          ) : session?.user.email && recoveryMode ? (\n            <form onSubmit={updateRecoveredPassword} className="space-y-2">\n              <p className="text-xs text-muted-foreground">Set a new password for your PHANTOM account.</p>\n              <input required type="password" minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="New password (8+ characters)" className={inputClass} />\n              <button type="submit" disabled={busy} className="w-full rounded-sm bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">{busy ? "Updating…" : "Update password"}</button>\n            </form>\n          ) : session?.user.email ? (
             <>
               <p className="mb-1 break-all text-xs text-muted-foreground">{session.user.email}</p>
               {profileUsername ? (
